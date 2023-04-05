@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdbool.h>
+#include<stdlib.h>
 
 #define TAMANHO_TABULEIRO 8
 
@@ -222,59 +223,32 @@ bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa des
                 }
             break;
         case BISPO:
-            if (abs(origem.linha - destino.linha) == abs(origem.coluna - destino.coluna)) {
-                int linhaDirecao = (destino.linha - origem.linha > 0) ? 1 : -1;
-                int colunaDirecao = (destino.coluna - origem.coluna > 0) ? 1 : -1;
-                int i = origem.linha + linhaDirecao;
-                int j = origem.coluna + colunaDirecao;
-                while (i != destino.linha && j != destino.coluna) {
-                    if (tabuleiro->casas[i][j].peca.peca.tipo != VAZIO) {
+            if(abs(destino.coluna - origem.coluna) == abs(destino.linha - origem.linha)) {
+                int colunaAtual = origem.coluna;
+                int linhaAtual = origem.linha;
+                int colunaDestino = destino.coluna;
+                int linhaDestino = destino.linha;
+                int colunaIncremento = (colunaDestino - colunaAtual > 0) ? 1 : -1;
+                int linhaIncremento = (linhaDestino - linhaAtual > 0) ? 1 : -1;
+
+                colunaAtual += colunaIncremento;
+                linhaAtual += linhaIncremento;
+                while(colunaAtual != colunaDestino && linhaAtual != linhaDestino) {
+                    if(tabuleiro->casas[linhaAtual][colunaAtual].peca.peca.tipo != VAZIO) {
                         return false;
                     }
-                    i += linhaDirecao;
-                    j += colunaDirecao;
-                } if (tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor != tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor || tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo == VAZIO) {
-                    return true;
-                } else {
-                    return false;
+                    colunaAtual += colunaIncremento;
+                    linhaAtual += linhaIncremento;
                 }
-            } else {
-                return false;
-                }
-            break;
-        case TORRE:
-            if (origem.linha == destino.linha) {
-                int colunaDirecao = (destino.coluna - origem.coluna > 0) ? 1 : -1;
-                int j = origem.coluna + colunaDirecao;
-                while (j != destino.coluna) {
-                        if (tabuleiro->casas[origem.linha][j].peca.peca.tipo != VAZIO) {
-                            return false;
-                        }
-                j += colunaDirecao;
-            }
-            if (tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor != tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor || tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo == VAZIO) {
+
                 return true;
-            } else {
+            }else {
                 return false;
             }
-            } else if (origem.coluna == destino.coluna) {
-                int linhaDirecao = (destino.linha - origem.linha > 0) ? 1 : -1;
-                int i = origem.linha + linhaDirecao;
-                while (i != destino.linha) {
-                if (tabuleiro->casas[i][origem.coluna].peca.peca.tipo != VAZIO) {
-                    return false;
-                }
-            i += linhaDirecao;
-        }
-        if (tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor != tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor || tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo == VAZIO) {
-            return true;
-        } else {
-            return false;
-        }
-        } else {
-            return false;
-            }
             break;
+        
+        case TORRE:
+            break; 
     }
 }
 
