@@ -248,7 +248,9 @@ bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa des
             break;
         
         case TORRE:
+            if(abs(origem.coluna - destino.coluna) > 0 && origem) 
             break; 
+    
     }
 }
 
