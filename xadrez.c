@@ -272,7 +272,58 @@ bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa des
                 return false;
             }
             break; 
-    
+
+        case DAMA: 
+            if(abs(destino.coluna - origem.coluna) == abs(destino.linha - origem.linha)) {
+                int colunaAtual = origem.coluna;
+                int linhaAtual = origem.linha;
+                int colunaDestino = destino.coluna;
+                int linhaDestino = destino.linha;
+                int colunaIncremento = (colunaDestino - colunaAtual > 0) ? 1 : -1;
+                int linhaIncremento = (linhaDestino - linhaAtual > 0) ? 1 : -1;
+
+                colunaAtual += colunaIncremento;
+                linhaAtual += linhaIncremento;
+                while(colunaAtual != colunaDestino && linhaAtual != linhaDestino) {
+                    if(tabuleiro->casas[linhaAtual][colunaAtual].peca.peca.tipo != VAZIO) {
+                        return false;
+                    }
+                    colunaAtual += colunaIncremento;
+                    linhaAtual += linhaIncremento;
+                }
+                return true;
+            }else if(abs(origem.coluna - destino.coluna) > 0 && origem.linha == destino.linha) {
+                for(int coluna = origem.coluna + 1; coluna < destino.coluna; coluna++) {
+                    if(tabuleiro->casas[origem.linha][coluna].peca.peca.tipo != VAZIO) {
+                        return false;
+                    }
+                }
+
+                tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = TORRE;
+                tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
+                return true;
+            }else if(abs(origem.linha - destino.linha) > 0 && origem.coluna == destino.coluna) {
+                for(int linha = origem.linha + 1; linha < destino.linha; linha++) {
+                    if(tabuleiro->casas[linha][origem.coluna].peca.peca.tipo != VAZIO) {
+                        return false;
+                    }
+                }
+
+                tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = TORRE;
+                tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
+                return true;
+            }else {
+                return false;
+            } 
+            break;
+
+        case REI:
+            if((abs(destino.coluna - origem.coluna) == 1 && abs(destino.linha - origem.linha) == 0) || (abs(destino.linha - origem.linha) == 1 && abs(destino.coluna - origem.coluna) == 0) || (abs(destino.linha - origem.linha) == 1 && abs(destino.coluna = origem.coluna) == 1)) {
+                return true;
+            }else {
+                return false;
+            }
+            break;
     }
 }
 
