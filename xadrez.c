@@ -248,7 +248,29 @@ bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa des
             break;
         
         case TORRE:
-            if(abs(origem.coluna - destino.coluna) > 0 && origem) 
+            if(abs(origem.coluna - destino.coluna) > 0 && origem.linha == destino.linha) {
+                for(int coluna = origem.coluna + 1; coluna < destino.coluna; coluna++) {
+                    if(tabuleiro->casas[origem.linha][coluna].peca.peca.tipo != VAZIO) {
+                        return false;
+                    }
+                }
+
+                tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = TORRE;
+                tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
+                return true;
+            }else if(abs(origem.linha - destino.linha) > 0 && origem.coluna == destino.coluna) {
+                for(int linha = origem.linha + 1; linha < destino.linha; linha++) {
+                    if(tabuleiro->casas[linha][origem.coluna].peca.peca.tipo != VAZIO) {
+                        return false;
+                    }
+                }
+
+                tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = TORRE;
+                tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
+                return true;
+            }else {
+                return false;
+            }
             break; 
     
     }
