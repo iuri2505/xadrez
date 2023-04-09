@@ -548,9 +548,9 @@ int main(void) {
         while(!movimentoValido) {
             int turno = checarTurno(numTurno);
             if(turno == BRANCO) {
-                printf("entre com o movimento jogador 1: ");
+                printf("entre com o movimento jogador 1 (exp. 2a4a): ");
             }else {
-                printf("entre com o movimento jogador 2: ");
+                printf("entre com o movimento jogador 2 (exp. 2a4a): ");
             }
             gets(movimento);
             if(strlen(movimento) == 4) {
