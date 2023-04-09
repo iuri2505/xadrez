@@ -6,6 +6,7 @@
 #define TAMANHO_TABULEIRO 8
 
 bool reiVivo = true;
+int numTurno = 1;
 
 typedef enum {
     VAZIO,
@@ -215,7 +216,26 @@ void checarRei(tabuleiroXadrez *tabuleiro, casa destino) {
     }
 }
 
+int checarTurno(int numTurno) {
+    int turno;
+    if(numTurno % 2 != 0) {
+        turno = BRANCO;
+    }else {
+        turno = PRETO;
+    }
+
+    return turno;
+}
+
 bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa destino) {
+    int turno = checarTurno(numTurno);
+
+    if(turno == BRANCO && tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != BRANCO) {
+        return false;
+    }else if(turno == PRETO && tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != PRETO) {
+        return false;
+    }
+
     switch(tipo) {
         case VAZIO:
             return false;    
@@ -309,19 +329,13 @@ bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa des
                 do {
                     colunaAtual += colunaIncremento;
                     linhaAtual += linhaIncremento;
-                    if(colunaAtual == destino.coluna && linhaAtual == destino.linha && tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor) {
+                    if(colunaAtual == destino.coluna && linhaAtual == destino.linha && (tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor || tabuleiro->casas[linhaAtual][colunaAtual].peca.peca.tipo == VAZIO)) {
                         checarRei(tabuleiro, destino);
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
                         tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
                         return true;
-                    }else if(tabuleiro->casas[linhaAtual][colunaAtual].peca.peca.tipo == VAZIO) {
-                        checarRei(tabuleiro, destino);
-                        tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
-                        tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
-                        tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
-                        return true;
-                    }else {
+                    }else if(tabuleiro->casas[linhaAtual][colunaAtual].peca.peca.tipo != VAZIO) {
                         return false;
                     }
                 }while(colunaAtual != destino.coluna && linhaAtual != destino.linha);
@@ -336,19 +350,13 @@ bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa des
                 int colunaIncremento = (destino.coluna - origem.coluna > 0) ? 1 : -1;
                 do {
                     colunaAtual += colunaIncremento;
-                    if(colunaAtual == destino.coluna && tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor) {
+                    if(colunaAtual == destino.coluna && (tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor || tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo == VAZIO)) {
                         checarRei(tabuleiro, destino);
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
                         tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
                         return true;
-                    }else if(tabuleiro->casas[destino.linha][colunaAtual].peca.peca.tipo == VAZIO) {
-                        checarRei(tabuleiro, destino);
-                        tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
-                        tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
-                        tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
-                        return true;
-                    }else {
+                    }else if(tabuleiro->casas[destino.linha][colunaAtual].peca.peca.tipo != VAZIO) {
                         return false;
                     }
                 }while(colunaAtual < destino.coluna);
@@ -358,22 +366,13 @@ bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa des
                 int linhaIncremento = (destino.linha - origem.linha > 0) ? 1 : -1;
                 do {
                     linhaAtual += linhaIncremento;
-                    printf("%d\n", linhaAtual);
-                    if(linhaAtual == destino.linha && tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor) {
-                        printf("carros vrum vrum\n");
+                    if(linhaAtual == destino.linha && (tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor || tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo == VAZIO)) {
                         checarRei(tabuleiro, destino);
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
                         tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
                         return true;
-                    }else if(tabuleiro->casas[linhaAtual][destino.coluna].peca.peca.tipo == VAZIO) {
-                        printf("aayaaya\n");
-                        checarRei(tabuleiro, destino);
-                        tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
-                        tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
-                        tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
-                        return true;
-                    }else {
+                    }else if(tabuleiro->casas[linhaAtual][destino.coluna].peca.peca.tipo != VAZIO) {
                         return false;
                     }
                 }while(linhaAtual < destino.linha);
@@ -393,41 +392,28 @@ bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa des
                 do {
                     colunaAtual += colunaIncremento;
                     linhaAtual += linhaIncremento;
-                    if(colunaAtual == destino.coluna && linhaAtual == destino.linha && tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor) {
+                    if(colunaAtual == destino.coluna && linhaAtual == destino.linha && (tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor || tabuleiro->casas[linhaAtual][colunaAtual].peca.peca.tipo == VAZIO)) {
                         checarRei(tabuleiro, destino);
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
                         tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
                         return true;
-                    }else if(tabuleiro->casas[linhaAtual][colunaAtual].peca.peca.tipo == VAZIO) {
-                        checarRei(tabuleiro, destino);
-                        tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
-                        tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
-                        tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
-                        return true;
-                    }else {
+                    }else if(tabuleiro->casas[linhaAtual][colunaAtual].peca.peca.tipo != VAZIO) {
                         return false;
                     }
                 }while(colunaAtual != destino.coluna && linhaAtual != destino.linha);
-
             }else if(abs(origem.coluna - destino.coluna) > 0 && origem.linha == destino.linha) {
                 int colunaAtual = origem.coluna;
                 int colunaIncremento = (destino.coluna - origem.coluna > 0) ? 1 : -1;
                 do {
                     colunaAtual += colunaIncremento;
-                    if(colunaAtual == destino.coluna && tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor) {
+                    if(colunaAtual == destino.coluna && (tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor || tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo == VAZIO)) {
                         checarRei(tabuleiro, destino);
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
                         tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
                         return true;
-                    }else if(tabuleiro->casas[destino.linha][colunaAtual].peca.peca.tipo == VAZIO) {
-                        checarRei(tabuleiro, destino);
-                        tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
-                        tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
-                        tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
-                        return true;
-                    }else {
+                    }else if(tabuleiro->casas[destino.linha][colunaAtual].peca.peca.tipo != VAZIO) {
                         return false;
                     }
                 }while(colunaAtual < destino.coluna);
@@ -438,19 +424,13 @@ bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa des
                 int linhaIncremento = (destino.linha - origem.linha > 0) ? 1 : -1;
                 do {
                     linhaAtual += linhaIncremento;
-                    if(linhaAtual == destino.linha && tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor) {
+                    if(linhaAtual == destino.linha && (tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor || tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo == VAZIO)) {
                         checarRei(tabuleiro, destino);
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
                         tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
                         return true;
-                    }else if(tabuleiro->casas[linhaAtual][destino.coluna].peca.peca.tipo == VAZIO) {
-                        checarRei(tabuleiro, destino);
-                        tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
-                        tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
-                        tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
-                        return true;
-                    }else {
+                    }else if(tabuleiro->casas[linhaAtual][destino.coluna].peca.peca.tipo != VAZIO) {
                         return false;
                     }
                 }while(linhaAtual < destino.linha);
@@ -552,8 +532,6 @@ bool gerarMovimento(tabuleiroXadrez *tabuleiro, char movimento[6]) {
     casa origem = {numLinhaOrigem, numColunaOrigem};
     casa destino = {numLinhaDestino, numColunaDestino};
     tipoPecas tipo = tabuleiro->casas[numLinhaOrigem][numColunaOrigem].peca.peca.tipo;
-    //printf("%d,%d %d,%d\n", numLinhaOrigem, numColunaOrigem, numLinhaDestino, numColunaDestino);
-    //printf("%d,%d %d,%d\n", origem.linha, origem.coluna, destino.linha, destino.coluna);
     bool valido = moverPeca(tabuleiro, tipo, origem, destino);
     return valido;
 }
@@ -565,11 +543,15 @@ int main(void) {
 
     char movimento[6];
     bool movimentoValido = false;
-    int quantidadeMovimentos = 0;
 
     while(reiVivo) {
         while(!movimentoValido) {
-            printf("entre com o movimento: ");
+            int turno = checarTurno(numTurno);
+            if(turno == BRANCO) {
+                printf("entre com o movimento jogador 1: ");
+            }else {
+                printf("entre com o movimento jogador 2: ");
+            }
             gets(movimento);
             if(strlen(movimento) == 4) {
                 movimentoValido = true;
@@ -577,13 +559,13 @@ int main(void) {
                 printf("comando invalido...\n");
             }
         }
-        quantidadeMovimentos++;
         movimentoValido = false;
     
         bool valido = gerarMovimento(&tabuleiro, movimento);
 
         if(valido) {
             gerarTabuleiro(tabuleiro);
+            numTurno++;
         }else {
             printf("comando invalido...\n");
         }
