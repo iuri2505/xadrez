@@ -359,23 +359,24 @@ bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa des
                     }else if(tabuleiro->casas[destino.linha][colunaAtual].peca.peca.tipo != VAZIO) {
                         return false;
                     }
-                }while(colunaAtual < destino.coluna);
+                }while(colunaAtual != destino.coluna);
 
             }else if(abs(origem.linha - destino.linha) > 0 && origem.coluna == destino.coluna) {
                 int linhaAtual = origem.linha;
                 int linhaIncremento = (destino.linha - origem.linha > 0) ? 1 : -1;
-                do {
+                while(linhaAtual != destino.linha){
                     linhaAtual += linhaIncremento;
                     if(linhaAtual == destino.linha && (tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor != tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor || tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo == VAZIO)) {
-                        checarRei(tabuleiro, destino);
+                       checarRei(tabuleiro, destino);
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.tipo = tipo;
                         tabuleiro->casas[origem.linha][origem.coluna].peca.peca.tipo = VAZIO;
                         tabuleiro->casas[destino.linha][destino.coluna].peca.peca.cor = tabuleiro->casas[origem.linha][origem.coluna].peca.peca.cor;
                         return true;
                     }else if(tabuleiro->casas[linhaAtual][destino.coluna].peca.peca.tipo != VAZIO) {
                         return false;
+                    }else {
                     }
-                }while(linhaAtual < destino.linha);
+                }
 
             }else {
                 return false;
@@ -416,7 +417,7 @@ bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa des
                     }else if(tabuleiro->casas[destino.linha][colunaAtual].peca.peca.tipo != VAZIO) {
                         return false;
                     }
-                }while(colunaAtual < destino.coluna);
+                }while(colunaAtual != destino.coluna);
 
 
             }else if(abs(origem.linha - destino.linha) > 0 && origem.coluna == destino.coluna) {
@@ -433,7 +434,7 @@ bool moverPeca(tabuleiroXadrez *tabuleiro, tipoPecas tipo, casa origem, casa des
                     }else if(tabuleiro->casas[linhaAtual][destino.coluna].peca.peca.tipo != VAZIO) {
                         return false;
                     }
-                }while(linhaAtual < destino.linha);
+                }while(linhaAtual != destino.linha);
 
             }else {
                 return false;
@@ -548,11 +549,11 @@ int main(void) {
         while(!movimentoValido) {
             int turno = checarTurno(numTurno);
             if(turno == BRANCO) {
-                printf("entre com o movimento jogador 1 (exp. 2a4a): ");
+                printf("entre com o movimento jogador pecas brancas (exp. 2a4a): ");
             }else {
-                printf("entre com o movimento jogador 2 (exp. 2a4a): ");
+                printf("entre com o movimento jogador pecas pretas (exp. 2a4a): ");
             }
-            gets(movimento);
+            scanf("%s", movimento);
             if(strlen(movimento) == 4) {
                 movimentoValido = true;
             }else {
